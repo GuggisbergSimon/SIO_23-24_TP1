@@ -13,22 +13,7 @@ public final class NearestNeighbor implements TspConstructiveHeuristic {
 
   @Override
   public TspTour computeTour(TspData data, int startCityIndex) {
-    citiesVisited = new boolean[data.getNumberOfCities()];
-    orderVisited = new int[data.getNumberOfCities()];
-    countVisited = 0;
-    distTot = 0;
-
-    // réinitialisation, voir si nécessaire (selon fonctionnement du main)
-    for (int i = 0; i < citiesVisited.length; ++i)
-    {
-      citiesVisited[i] = false;
-    }
-    for (int i = 0; i < orderVisited.length; ++i)
-    {
-      orderVisited[i] = -1;
-    }
-    citiesVisited[startCityIndex] = true;
-    orderVisited[countVisited++] = startCityIndex;
+    Init(data.getNumberOfCities(), startCityIndex);
 
     int currentClosest = getClosestCity(data, startCityIndex);
     citiesVisited[currentClosest] = true;
@@ -43,6 +28,26 @@ public final class NearestNeighbor implements TspConstructiveHeuristic {
     }
 
     return new TspTour(data, orderVisited, distTot);
+  }
+
+  private void Init(int numberOfCities, int startCityIndex)
+  {
+    citiesVisited = new boolean[numberOfCities];
+    orderVisited = new int[numberOfCities];
+    countVisited = 0;
+    distTot = 0;
+
+    // réinitialisation, voir si nécessaire (selon fonctionnement du main)
+    for (int i = 0; i < citiesVisited.length; ++i)
+    {
+      citiesVisited[i] = false;
+    }
+    for (int i = 0; i < orderVisited.length; ++i)
+    {
+      orderVisited[i] = -1;
+    }
+    citiesVisited[startCityIndex] = true;
+    orderVisited[countVisited++] = startCityIndex;
   }
 
   private int getClosestCity(TspData data, int city)
