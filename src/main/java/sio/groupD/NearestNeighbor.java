@@ -17,14 +17,14 @@ public final class NearestNeighbor implements TspConstructiveHeuristic {
 
     int currentClosest = getClosestCity(data, startCityIndex);
     citiesVisited[currentClosest] = true;
-    orderVisited[countVisited++] = currentClosest;
+    orderVisited[countVisited] = currentClosest;
     distTot += data.getDistance(startCityIndex, currentClosest);
 
-    while (countVisited < data.getNumberOfCities())
+    while (++countVisited < data.getNumberOfCities())
     {
-      currentClosest = getClosestCity(data, startCityIndex);
+      currentClosest = getClosestCity(data, currentClosest);
       citiesVisited[currentClosest] = true;
-      orderVisited[countVisited++] = currentClosest;
+      orderVisited[countVisited] = currentClosest;
     }
 
     return new TspTour(data, orderVisited, distTot);
@@ -61,7 +61,6 @@ public final class NearestNeighbor implements TspConstructiveHeuristic {
       {
         closestOne = i;
         distMin = data.getDistance(i, city);
-
       }
     }
     distTot += data.getDistance(closestOne, city);
