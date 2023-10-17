@@ -23,6 +23,12 @@ public final class Main {
         //todo convert both names and optimalLengths table
         //TspMetaData[] metaDatas = {new TspMetaData("att532", 2)};
 
+        String leftAlignFormat = "| %-6s | %-15s | %-9d | %-14f | %-8f | %-12f |%n";
+        String line =     "+--------+-----------------+-----------+----------------+-----------+--------------+%n";
+        System.out.format(line);
+        System.out.format("| file   | algorithm       | minLength | averageLength  | minRatio  | averageRatio |%n");
+        System.out.format(line);
+
         String[] names = {"att532", "rat575", "rl1889", "u574", "u1817", "vm1748"};
         int[] optimalLengths = {86729, 6773, 316536, 36905, 57201, 336556};
         for (int i = 0; i < names.length; i++) {
@@ -53,20 +59,26 @@ public final class Main {
                 }
 
                 TspObservation minTour = observations[0];
+                long total = 0;
                 for (TspObservation observation : observations) {
+                    total += observation.tour.length();
                     if (observation.tour.length() < minTour.tour.length()) {
                         minTour = observation;
                     }
                 }
 
-                System.out.printf("file:%s algo:%s length:%d ratio:%f%n",
+                double average = (double) total / observations.length;
+                System.out.format(leftAlignFormat,
                         names[i],
-                        algorithm.getClass().getName(),
+                        algorithm.getClass().getSimpleName(),
                         minTour.tour.length(),
-                        //  = 2
-                        ((float) minTour.tour.length() / optimalLengths[i])
+                        average,
+                        (double) minTour.tour.length() / optimalLengths[i],
+                        average / optimalLengths[i]
                 );
             }
         }
+
+        System.out.format(line);
     }
 }
