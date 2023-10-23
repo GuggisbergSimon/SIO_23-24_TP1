@@ -16,7 +16,6 @@ public final class Main {
 
     public static void main(String[] args) {
         // TODO
-        //  - Implémentation des classes NearestNeighbor et DoubleEndsNearestNeighbor ;
         //  - Affichage des statistiques dans la classe Main ;
         //  - Documentation abondante des classes comprenant :
         //    - la javadoc, avec auteurs et description des implémentations ;
@@ -30,15 +29,18 @@ public final class Main {
                 new TspMetaData("u1817", 57201),
                 new TspMetaData("vm1748", 336556),
         };
+        TspConstructiveHeuristic[] algorithms = {new NearestNeighbor(), new DoubleEndsNearestNeighbor()};
 
-        // Per File Per Algorithm table
-        String perFilePerAlgorithmFormat = "| %-6s | %-15s | %-9d | %-14f | %-8f | %-12f | %-15f |%n";
-        String line =     "+--------+-----------------+-----------+----------------+-----------+--------------+-----------------+%n";
+        String formatString = "| %-6s | %-25s | %-9d | %-14f | %-8f | %-12f | %-11f |%n";
+        String line =     "+--------+---------------------------+-----------+----------------+----------+--------------+-------------+%n";
         System.out.format(line);
-        System.out.format("| file   | algorithm       | minLength | averageLength  | minRatio  | averageRatio | averageTime[ms] |%n");
+        System.out.format("| file   | algorithm                 | minLength | averageLength  | minRatio | averageRatio | averageTime |%n");
         System.out.format(line);
 
-        for (TspMetaData metaData: metaDatas) {
+        double[][][] summaryData = new double[algorithms.length][metaDatas.length][3];
+
+        for (int dataIndex = 0; dataIndex < metaDatas.length; dataIndex++) {
+            TspMetaData metaData  = metaDatas[dataIndex];
             TspData data = null;
             try {
                 data = TspData.fromFile("data/" + metaData.name + ".dat");
@@ -47,8 +49,8 @@ public final class Main {
                 return;
             }
 
-            TspConstructiveHeuristic[] algorithms = {new NearestNeighbor() /*, new DoubleEndsNearestNeighbor() */};
-            for (TspConstructiveHeuristic algorithm : algorithms) {
+            for (int algoIndex = 0; algoIndex < algorithms.length; algoIndex++) {
+                TspConstructiveHeuristic algorithm = algorithms[algoIndex];
                 int nbrTours = data.getNumberOfCities();
 
                 // TODO remove traces of MAX_VALUE_TEST for rendu
@@ -77,18 +79,54 @@ public final class Main {
                 }
 
                 double average = (double) totalLength / observations.length;
-                System.out.format(perFilePerAlgorithmFormat,
+
+                // Saves meaningful summarized data
+                summaryData[algoIndex][dataIndex] = new double[]{
+                        (double) minTour.tour.length() / metaData.optimalLength,
+                        average / metaData.optimalLength,
+                        totalTime / observations.length
+                };
+
+                System.out.format(formatString,
                         metaData.name,
                         algorithm.getClass().getSimpleName(),
                         minTour.tour.length(),
                         average,
-                        (double) minTour.tour.length() / metaData.optimalLength,
-                        average / metaData.optimalLength,
-                        totalTime / observations.length
+                        summaryData[algoIndex][dataIndex][0],
+                        summaryData[algoIndex][dataIndex][1],
+                        summaryData[algoIndex][dataIndex][2]
                 );
             }
         }
 
+        System.out.format(line);
+
+        System.out.println("\n\n");
+
+        formatString = "| %-25s | %-8f | %-12f | %-11f |%n";
+        line =            "+---------------------------+----------+--------------+-------------+%n";
+        System.out.format(line);
+        System.out.format("| algorithm                 | minRatio | averageRatio | averageTime |%n");
+        for (int algoIndex = 0; algoIndex < algorithms.length; algoIndex++) {
+            int nbrSummary = 3;
+            double[] summaryLine = new double[nbrSummary];
+            for (int dataIndex = 0; dataIndex < metaDatas.length; dataIndex++) {
+                for (int i = 0; i < nbrSummary; i++) {
+                    summaryLine[i] += summaryData[algoIndex][dataIndex][i];
+                }
+            }
+
+            for (int i = 0; i < nbrSummary; i++) {
+                summaryLine[i] /= metaDatas.length;
+            }
+
+            System.out.format(formatString,
+                    algorithms[algoIndex].getClass().getSimpleName(),
+                    summaryLine[0],
+                    summaryLine[1],
+                    summaryLine[2]
+            );
+        }
         System.out.format(line);
     }
 }
