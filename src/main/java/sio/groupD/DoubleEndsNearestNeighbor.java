@@ -32,7 +32,8 @@ public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic
   public TspTour computeTour(TspData data, int startCityIndex) {
     Init(data.getNumberOfCities(), startCityIndex);
 
-    currentCityEnd = getClosestCity(data, startCityIndex);
+    currentCityEnd = Utils.getClosestCity(citiesVisited, data, startCityIndex);
+    distTot += data.getDistance(currentCityEnd, startCityIndex);
     citiesVisited[currentCityEnd] = true;
     orderVisited.add(currentCityEnd);
     distTot += data.getDistance(startCityIndex, currentCityEnd);
@@ -67,33 +68,6 @@ public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic
 
     citiesVisited[startCityIndex] = true;
     orderVisited.add(startCityIndex);
-  }
-
-  /**
-   * permet de trouver la ville la plus proche de la ville fourni en param
-   * nécessaire pour trouver la première ville plus proche de la ville de départ
-   * @param data données à fournir pour le calcul, contient notamment la distance entre chaque ville
-   * @param city indice de la ville depuis laquel on veut trouver la ville la plus proche
-   * @return l'indice de la ville la plus proche, -1 si aucune ville n'est libre
-   */
-  private int getClosestCity(TspData data, int city)
-  {
-    int closestOne = -1;
-    int distMin = Integer.MAX_VALUE;
-
-    for (int i = 0; i < citiesVisited.length; ++i)
-    {
-      if (!citiesVisited[i] && distMin > data.getDistance(i, city))
-      {
-        closestOne = i;
-        distMin = data.getDistance(i, city);
-      }
-    }
-    // on return -1 s'il ne reste plus aucune ville à parcourir (ne devrait jamais arriver)
-    if (closestOne == -1) return -1;
-    // sinon on ajoute la distance à la distance totale et on return l'indice de la ville trouvée
-    distTot += distMin;
-    return closestOne;
   }
 
   /**

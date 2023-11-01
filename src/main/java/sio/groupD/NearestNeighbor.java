@@ -26,14 +26,17 @@ public final class NearestNeighbor implements TspConstructiveHeuristic {
   public TspTour computeTour(TspData data, int startCityIndex) {
     Init(data.getNumberOfCities(), startCityIndex);
 
-    int currentClosest = getClosestCity(data, startCityIndex);
+    int currentClosest = Utils.getClosestCity(citiesVisited, data, startCityIndex);
+    distTot += data.getDistance(currentClosest, startCityIndex);
     citiesVisited[currentClosest] = true;
     orderVisited[countVisited] = currentClosest;
     distTot += data.getDistance(startCityIndex, currentClosest);
 
     while (++countVisited < data.getNumberOfCities())
     {
-      currentClosest = getClosestCity(data, currentClosest);
+      int previous = currentClosest;
+      currentClosest = Utils.getClosestCity(citiesVisited, data, currentClosest);
+      distTot += data.getDistance(currentClosest, previous);
       citiesVisited[currentClosest] = true;
       orderVisited[countVisited] = currentClosest;
     }
@@ -64,31 +67,5 @@ public final class NearestNeighbor implements TspConstructiveHeuristic {
     }
     citiesVisited[startCityIndex] = true;
     orderVisited[countVisited++] = startCityIndex;
-  }
-
-  /**
-   * permet de trouver l'indice de la ville la plus proche de la ville passée en parametre
-   * @param data données à fournir pour le calcul, contient notamment la distance entre chaque ville
-   * @param city indice de la ville depuis laquelle on recherche la ville la plus proche
-   * @return l'indice de la ville la plus proche, si aucune ville disponible : -1
-   */
-  private int getClosestCity(TspData data, int city)
-  {
-    int closestOne = -1;
-    int distMin = Integer.MAX_VALUE;
-
-    for (int i = 0; i < citiesVisited.length; ++i)
-    {
-      if (!citiesVisited[i] && distMin > data.getDistance(i, city))
-      {
-        closestOne = i;
-        distMin = data.getDistance(i, city);
-      }
-    }
-    // on retourn -1 s'il ne reste plus aucune ville à parcourir (ne devrait jamais arriver)
-    if (closestOne == -1) return -1;
-    // sinon on ajoute la distance à la distance totale et on return l'indice de la ville trouvée
-    distTot += distMin;
-    return closestOne;
   }
 }
