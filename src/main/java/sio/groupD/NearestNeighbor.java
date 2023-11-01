@@ -1,3 +1,7 @@
+/**
+ * Authors : Jeremiah Steiner & Simon Guggisberg
+ */
+
 package sio.groupD;
 
 import sio.tsp.TspData;
@@ -5,8 +9,7 @@ import sio.tsp.TspConstructiveHeuristic;
 import sio.tsp.TspTour;
 
 /**
- * Class NearestNeighbor permettant de créer des instances capables de calculer
- * le tour à l'aide de l'heuristique du plus proche voisin
+ * Classe NearestNeighbor permet de calculer un tour à l'aide de l'heuristique du plus proche voisin
  */
 public final class NearestNeighbor implements TspConstructiveHeuristic {
 
@@ -16,24 +19,27 @@ public final class NearestNeighbor implements TspConstructiveHeuristic {
   private int distTot = 0;
 
   /**
-   * permet de calculer une tournée en utilisant l'heuristique du NearestNeighbor
+   * Calcule un tour en utilisant l'heuristique du NearestNeighbor
    * @param data Data of problem instance
    * @param startCityIndex Index of starting city, if needed by the implementation
    *
-   * @return un TspTour, permettant de stoquer les infos relatives au tour trouvé
+   * @return un TspTour, stockant les infos relatives au tour trouvé
    */
   @Override
   public TspTour computeTour(TspData data, int startCityIndex) {
     Init(data.getNumberOfCities(), startCityIndex);
 
-    int currentClosest = getClosestCity(data, startCityIndex);
+    int currentClosest = Utils.getClosestCity(citiesVisited, data, startCityIndex);
+    distTot += data.getDistance(currentClosest, startCityIndex);
     citiesVisited[currentClosest] = true;
     orderVisited[countVisited] = currentClosest;
     distTot += data.getDistance(startCityIndex, currentClosest);
 
     while (++countVisited < data.getNumberOfCities())
     {
-      currentClosest = getClosestCity(data, currentClosest);
+      int previous = currentClosest;
+      currentClosest = Utils.getClosestCity(citiesVisited, data, currentClosest);
+      distTot += data.getDistance(currentClosest, previous);
       citiesVisited[currentClosest] = true;
       orderVisited[countVisited] = currentClosest;
     }
@@ -42,7 +48,7 @@ public final class NearestNeighbor implements TspConstructiveHeuristic {
   }
 
   /**
-   * permet d'initialiser les variables nécessaires au calcul du parcourt
+   * Initialise les variables nécessaires au calcul du tour
    * @param numberOfCities nombre total de villes lors de la simulation
    * @param startCityIndex index de la ville de départ
    */
@@ -64,31 +70,5 @@ public final class NearestNeighbor implements TspConstructiveHeuristic {
     }
     citiesVisited[startCityIndex] = true;
     orderVisited[countVisited++] = startCityIndex;
-  }
-
-  /**
-   * permet de trouver l'indice de la ville la plus proche de la ville passée en parametre
-   * @param data données à fournir pour le calcul, contient notamment la distance entre chaque ville
-   * @param city indice de la ville depuis laquelle on recherche la ville la plus proche
-   * @return l'indice de la ville la plus proche, si aucune ville disponible : -1
-   */
-  private int getClosestCity(TspData data, int city)
-  {
-    int closestOne = -1;
-    int distMin = Integer.MAX_VALUE;
-
-    for (int i = 0; i < citiesVisited.length; ++i)
-    {
-      if (!citiesVisited[i] && distMin > data.getDistance(i, city))
-      {
-        closestOne = i;
-        distMin = data.getDistance(i, city);
-      }
-    }
-    // on retourn -1 s'il ne reste plus aucune ville à parcourir (ne devrait jamais arriver)
-    if (closestOne == -1) return -1;
-    // sinon on ajoute la distance à la distance totale et on return l'indice de la ville trouvée
-    distTot += distMin;
-    return closestOne;
   }
 }
