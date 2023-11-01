@@ -1,6 +1,6 @@
 # SIO_23-24_TP1
 
-Exemple d'output console générés par le programme. Le ```averageTime``` peut varier selon la machine sur laquelle le code est exécuté.
+Exemple d'output console généré par le programme. Le ```averageTime``` peut varier selon la machine sur laquelle le code est exécuté.
 
 
 | file    | algorithm                 | minLength | averageLength | minRatio | averageRatio | averageTime |
