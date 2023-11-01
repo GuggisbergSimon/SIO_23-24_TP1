@@ -22,8 +22,6 @@ public final class Main {
      */
     private record TspMetaData (String name, int optimalLength) { }
 
-    // TODO remove traces of MAX_VALUE_TEST for rendu
-    private static final int MAX_VALUE_TEST = 1000;
     private static final int NS_2_MS = 1000000;
     private static final int NBR_RELEVANT_RESULTS = 3;
     private static final TspConstructiveHeuristic[] ALGORITHMS = {new NearestNeighbor(), new DoubleEndsNearestNeighbor()};
@@ -59,11 +57,6 @@ public final class Main {
             for (int algoIndex = 0; algoIndex < ALGORITHMS.length; algoIndex++) {
                 TspConstructiveHeuristic algorithm = ALGORITHMS[algoIndex];
                 int nbrTours = data.getNumberOfCities();
-
-                // TODO remove traces of MAX_VALUE_TEST for rendu
-                if (nbrTours > MAX_VALUE_TEST) {
-                    continue;
-                }
 
                 // Calcule tous les tours possibles et les enregistre sous forme d'observation
                 TspObservation[] observations = new TspObservation[nbrTours];
