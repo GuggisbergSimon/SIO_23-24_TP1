@@ -1,3 +1,7 @@
+/**
+ * Authors : Jeremiah Steiner & Simon Guggisberg
+ */
+
 package sio.groupD;
 
 import sio.tsp.TspData;
@@ -5,8 +9,7 @@ import sio.tsp.TspConstructiveHeuristic;
 import sio.tsp.TspTour;
 
 /**
- * Class NearestNeighbor permettant de créer des instances capables de calculer
- * le tour à l'aide de l'heuristique du plus proche voisin
+ * Classe NearestNeighbor permet de calculer un tour à l'aide de l'heuristique du plus proche voisin
  */
 public final class NearestNeighbor implements TspConstructiveHeuristic {
 
@@ -16,11 +19,11 @@ public final class NearestNeighbor implements TspConstructiveHeuristic {
   private int distTot = 0;
 
   /**
-   * permet de calculer une tournée en utilisant l'heuristique du NearestNeighbor
+   * Calcule un tour en utilisant l'heuristique du NearestNeighbor
    * @param data Data of problem instance
    * @param startCityIndex Index of starting city, if needed by the implementation
    *
-   * @return un TspTour, permettant de stoquer les infos relatives au tour trouvé
+   * @return un TspTour, stockant les infos relatives au tour trouvé
    */
   @Override
   public TspTour computeTour(TspData data, int startCityIndex) {
@@ -45,7 +48,7 @@ public final class NearestNeighbor implements TspConstructiveHeuristic {
   }
 
   /**
-   * permet d'initialiser les variables nécessaires au calcul du parcourt
+   * Initialise les variables nécessaires au calcul du tour
    * @param numberOfCities nombre total de villes lors de la simulation
    * @param startCityIndex index de la ville de départ
    */

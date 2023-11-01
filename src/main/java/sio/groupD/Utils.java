@@ -1,12 +1,18 @@
+/**
+ * Authors : Jeremiah Steiner & Simon Guggisberg
+ */
+
 package sio.groupD;
 
 import sio.tsp.TspData;
 
+/**
+ * Classe Utilitaire pour méthodes statiques partagées par plusieurs classes
+ */
 public class Utils {
-    public record TspClosestCity(int index, int distance) { }
 
     /**
-     * Permet de trouver l'indice de la ville la plus proche de la ville passée en paramètre
+     * Trouve l'indice de la ville la plus proche de la ville passée en paramètre
      * @param citiesVisited Un tableau de booléens représentant les villes déjà visitées, ou non
      * @param data données à fournir pour le calcul, contient notamment la distance entre chaque ville
      * @param city indice de la ville depuis laquelle on recherche la ville la plus proche

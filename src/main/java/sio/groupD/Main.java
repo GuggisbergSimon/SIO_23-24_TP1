@@ -1,3 +1,7 @@
+/**
+ * Authors : Jeremiah Steiner & Simon Guggisberg
+ */
+
 package sio.groupD;
 
 import sio.tsp.TspConstructiveHeuristic;
@@ -6,8 +10,16 @@ import sio.tsp.TspParsingException;
 import sio.tsp.TspTour;
 import java.io.FileNotFoundException;
 
+/**
+ * Classe Main comprenant les différents paramètres et lançant les différentes fonctions de l'application
+ */
 public final class Main {
 
+    /**
+     * Record stockant en mémoire des méta informations pour un problème TSP
+     * @param name le nom d'un fichier contenant les données du problème
+     * @param optimalLength la longueur optimale correspondant aux données du problème
+     */
     private record TspMetaData (String name, int optimalLength) { }
 
     // TODO remove traces of MAX_VALUE_TEST for rendu
@@ -129,11 +141,6 @@ public final class Main {
     }
 
     public static void main(String[] args) {
-        // TODO
-        //  - Documentation abondante des classes comprenant :
-        //    - la javadoc, avec auteurs et description des implémentations ;
-        //    - des commentaires sur les différentes parties de vos algorithmes.
-
         // Imprime le header du premier tableau
         String formatString = "| %-6s | %-25s | %-9d | %-14f | %-8f | %-12f | %-11f |%n";
         String line =     "+--------+---------------------------+-----------+----------------+----------+--------------+-------------+%n";
