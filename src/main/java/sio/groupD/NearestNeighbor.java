@@ -55,9 +55,6 @@ public final class NearestNeighbor implements TspConstructiveHeuristic {
         orderVisited = new int[numberOfCities];
         countVisited = 0;
         distTot = 0;
-
-        Arrays.fill(citiesVisited, false);
-
         citiesVisited[startCityIndex] = true;
         orderVisited[countVisited++] = startCityIndex;
     }
