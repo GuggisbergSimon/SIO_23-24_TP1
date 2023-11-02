@@ -17,12 +17,13 @@ import java.util.List;
  */
 public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic {
 
+  private int numberOfCities;
   private boolean[] citiesVisited;
-  private List<Integer> orderVisited = new LinkedList<>();
+  private int firstCounter = 0;
+  private int[] visited;
+  private int lastCounter = 0;
   private int countVisited = 0;
   private int distTot = 0;
-  private int currentCityStart = -1;
-  private int currentCityEnd = -1;
 
 
   /**
@@ -36,14 +37,12 @@ public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic
   public TspTour computeTour(TspData data, int startCityIndex) {
     Init(data.getNumberOfCities(), startCityIndex);
 
-    currentCityEnd = currentCityStart;
-
-    while (++countVisited < data.getNumberOfCities())
+    while (countVisited++ < numberOfCities)
     {
       getClosestCityAndAddIt(data);
     }
 
-    return new TspTour(data, orderVisited.stream().mapToInt(i->i).toArray(), distTot);
+    return new TspTour(data, visited, distTot);
   }
 
   /**
@@ -53,17 +52,16 @@ public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic
    */
   private void Init(int numberOfCities, int startCityIndex)
   {
-    currentCityStart = startCityIndex;
-    currentCityEnd = -1;
+    this.numberOfCities = numberOfCities;
     citiesVisited = new boolean[numberOfCities];
-    orderVisited = new LinkedList<>();
-    countVisited = 1;
+    firstCounter = 1;
+    lastCounter = 0;
+    countVisited = 0;
+    visited = new int[numberOfCities];
+    visited[countVisited++] = startCityIndex;
     distTot = 0;
 
-    Arrays.fill(citiesVisited, false);
-
     citiesVisited[startCityIndex] = true;
-    orderVisited.add(startCityIndex);
   }
 
   /**
@@ -74,38 +72,51 @@ public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic
   {
     int closestOne = -1;
     int distMin = Integer.MAX_VALUE;
-    int bestCityFrom = -1;
+    boolean byFirst = false;
+    int indiceToModify = -1;
 
-    for (int i = 0; i < citiesVisited.length; ++i)
+    for (int i = 0; i < numberOfCities; ++i)
     {
       if (citiesVisited[i]) continue;
-      if (distMin > data.getDistance(i, currentCityStart))
+      if (countVisited == 2) // premier tour
       {
-        closestOne = i;
-        distMin = data.getDistance(i, currentCityStart);
-        bestCityFrom = currentCityStart;
+        if (distMin > data.getDistance(i, visited[0]))
+        {
+          closestOne = i;
+          distMin = data.getDistance(i, visited[0]);
+          indiceToModify = numberOfCities - 1;
+        }
+        continue;
       }
-      // si dist =, cela ne rentre pas dans le 2ème if
-      if (distMin > data.getDistance(i, currentCityEnd))
+      if (distMin > data.getDistance(i, visited[firstCounter]))
       {
         closestOne = i;
-        distMin = data.getDistance(i, currentCityEnd);
-        bestCityFrom = currentCityEnd;
+        indiceToModify = firstCounter + 1;
+        distMin = data.getDistance(i, visited[firstCounter]);
+        byFirst = true;
+      }
+      // si dist ==, cela ne rentre pas dans le second if
+      if (distMin > data.getDistance(i, visited[numberOfCities - lastCounter]))
+      {
+        closestOne = i;
+        indiceToModify = numberOfCities - lastCounter - 1;
+        distMin = data.getDistance(i, visited[numberOfCities - lastCounter]);
+        byFirst = false;
       }
     }
+    if (closestOne == -1) return;
 
-    distTot += data.getDistance(closestOne, bestCityFrom);
+    distTot += distMin;
     citiesVisited[closestOne] = true;
+    visited[indiceToModify] = closestOne;
 
-    if (currentCityStart == bestCityFrom)
+    if (byFirst)
     {
-      orderVisited.add(0, closestOne);
-      currentCityStart = closestOne;
+      ++firstCounter;
     }
     else
     {
-      orderVisited.add(orderVisited.size(), closestOne);
-      currentCityEnd = closestOne;
+      ++lastCounter;
     }
   }
 }
