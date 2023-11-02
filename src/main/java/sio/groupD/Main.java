@@ -35,7 +35,7 @@ public final class Main {
     };
 
     /**
-     * Calcule et imprime les résultats relevants par metada par algorithme
+     * Calcule et imprime les résultats relevants par metadata par algorithme
      * @param formatString le format dans lequel il faut imprimer les résultats
      * @param filesFolder le dossier dans lequel se trouvent les fichiers contenant les données
      * @param filesExtension l'extension de fichier dans lesquels se trouvent les données
@@ -135,10 +135,9 @@ public final class Main {
 
     public static void main(String[] args) {
         // Imprime le header du premier tableau
-        String formatString = "| %-6s | %-25s | %-9d | %-14f | %-8f | %-12f | %-11f |%n";
-        String line =     "+--------+---------------------------+-----------+----------------+----------+--------------+-------------+%n";
-        System.out.format(line);
-        System.out.format("| file   | algorithm                 | minLength | averageLength  | minRatio | averageRatio | averageTime |%n");
+        String formatString = "| %-7s | %-25s | %9d | %13f | %8f | %12f | %11f |%n";
+        String line =     "|:--------|:--------------------------|----------:|--------------:|---------:|-------------:|------------:|%n";
+        System.out.format("| file    | algorithm                 | minLength | averageLength | minRatio | averageRatio | averageTime |%n");
         System.out.format(line);
 
         double[][][] summaryData;
@@ -154,17 +153,15 @@ public final class Main {
             return;
         }
 
-        System.out.format(line);
         System.out.println();
 
         // Imprime le header du second tableau
         formatString = "| %-25s | %-8f | %-12f | %-11f |%n";
-        line =            "+---------------------------+----------+--------------+-------------+%n";
-        System.out.format(line);
+        line =            "|:--------------------------|---------:|-------------:|------------:|%n";
         System.out.format("| algorithm                 | minRatio | averageRatio | averageTime |%n");
+        System.out.format(line);
 
         printPerAlgorithm(summaryData, formatString);
 
-        System.out.format(line);
     }
 }

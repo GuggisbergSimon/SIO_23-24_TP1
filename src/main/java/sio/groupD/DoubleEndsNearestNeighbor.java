@@ -8,6 +8,7 @@ import sio.tsp.TspData;
 import sio.tsp.TspConstructiveHeuristic;
 import sio.tsp.TspTour;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,11 +36,7 @@ public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic
   public TspTour computeTour(TspData data, int startCityIndex) {
     Init(data.getNumberOfCities(), startCityIndex);
 
-    currentCityEnd = Utils.getClosestCity(citiesVisited, data, startCityIndex);
-    distTot += data.getDistance(currentCityEnd, startCityIndex);
-    citiesVisited[currentCityEnd] = true;
-    orderVisited.add(currentCityEnd);
-    distTot += data.getDistance(startCityIndex, currentCityEnd);
+    currentCityEnd = currentCityStart;
 
     while (++countVisited < data.getNumberOfCities())
     {
@@ -63,11 +60,7 @@ public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic
     countVisited = 1;
     distTot = 0;
 
-    // réinitialisation, voir si nécessaire (selon fonctionnement du main)
-    for (int i = 0; i < citiesVisited.length; ++i)
-    {
-      citiesVisited[i] = false;
-    }
+    Arrays.fill(citiesVisited, false);
 
     citiesVisited[startCityIndex] = true;
     orderVisited.add(startCityIndex);
