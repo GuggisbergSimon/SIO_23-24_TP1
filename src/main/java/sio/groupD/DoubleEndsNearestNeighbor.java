@@ -1,15 +1,19 @@
+/**
+ * Authors : Jeremiah Steiner & Simon Guggisberg
+ */
+
 package sio.groupD;
 
 import sio.tsp.TspData;
 import sio.tsp.TspConstructiveHeuristic;
 import sio.tsp.TspTour;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Class DoubleEndsNearestNeighbor permettant de créer des instances capables de calculer
- * le tour à l'aide de l'heuristique des plus proches voisins par les deux bouts
+ * Class DoubleEndsNearestNeighbor permet de calculer un tour à l'aide de l'heuristique des plus proches voisins par les deux bouts
  */
 public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic {
 
@@ -22,20 +26,17 @@ public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic
 
 
   /**
-   * permet de calculer le tour en utilisant l'heuristique des DoubleEndsNearestNeighbor
+   * Calcule un tour en utilisant l'heuristique du DoubleEndsNearestNeighbor
    * @param data Data of problem instance
    * @param startCityIndex Index of starting city, if needed by the implementation
    *
-   * @return un TspTour, permettant de stoquer les infos relatives au tour trouvé
+   * @return un TspTour, stockant les infos relatives au tour trouvé
    */
   @Override
   public TspTour computeTour(TspData data, int startCityIndex) {
     Init(data.getNumberOfCities(), startCityIndex);
 
-    currentCityEnd = getClosestCity(data, startCityIndex);
-    citiesVisited[currentCityEnd] = true;
-    orderVisited.add(currentCityEnd);
-    distTot += data.getDistance(startCityIndex, currentCityEnd);
+    currentCityEnd = currentCityStart;
 
     while (++countVisited < data.getNumberOfCities())
     {
@@ -46,9 +47,9 @@ public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic
   }
 
   /**
-   * permet d'initialiser les variables nécessaires au calcul du tour
-   * @param numberOfCities nombre total de ville lors de la simulation
-   * @param startCityIndex indice de la ville de départ
+   * Initialise les variables nécessaires au calcul du tour
+   * @param numberOfCities nombre total de villes lors de la simulation
+   * @param startCityIndex index de la ville de départ
    */
   private void Init(int numberOfCities, int startCityIndex)
   {
@@ -59,45 +60,14 @@ public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic
     countVisited = 1;
     distTot = 0;
 
-    // réinitialisation, voir si nécessaire (selon fonctionnement du main)
-    for (int i = 0; i < citiesVisited.length; ++i)
-    {
-      citiesVisited[i] = false;
-    }
+    Arrays.fill(citiesVisited, false);
 
     citiesVisited[startCityIndex] = true;
     orderVisited.add(startCityIndex);
   }
 
   /**
-   * permet de trouver la ville la plus proche de la ville fourni en param
-   * nécessaire pour trouver la première ville plus proche de la ville de départ
-   * @param data données à fournir pour le calcul, contient notamment la distance entre chaque ville
-   * @param city indice de la ville depuis laquel on veut trouver la ville la plus proche
-   * @return l'indice de la ville la plus proche, -1 si aucune ville n'est libre
-   */
-  private int getClosestCity(TspData data, int city)
-  {
-    int closestOne = -1;
-    int distMin = Integer.MAX_VALUE;
-
-    for (int i = 0; i < citiesVisited.length; ++i)
-    {
-      if (!citiesVisited[i] && distMin > data.getDistance(i, city))
-      {
-        closestOne = i;
-        distMin = data.getDistance(i, city);
-      }
-    }
-    // on return -1 s'il ne reste plus aucune ville à parcourir (ne devrait jamais arriver)
-    if (closestOne == -1) return -1;
-    // sinon on ajoute la distance à la distance totale et on return l'indice de la ville trouvée
-    distTot += distMin;
-    return closestOne;
-  }
-
-  /**
-   * peremet d'update le tour en l'ajoutant au bon endroit de la liste (à l'avant ou à l'arrière suivant la distance)
+   * Met à jour le tour en l'ajoutant au bon endroit de la liste (à l'avant ou à l'arrière suivant la distance)
    * @param data données à fournir pour le calcul, contient notamment la distance entre chaque ville
    */
   private void getClosestCityAndAddIt(TspData data)
