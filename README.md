@@ -2,6 +2,14 @@
 
 Exemple d'output console généré par le programme. Le ```averageTime``` peut varier selon la machine sur laquelle le code est exécuté.
 
+Légende :
+- ```file``` est le nom du fichier 
+- ```algorithm``` est l'algorithm utilisé
+- ```minLength``` est la longueur minimale trouvée
+- ```averageLength``` est la longueur moyenne trouvée
+- ```minRatio``` est le ratio entre la longueur optimale et la longueur minimale trouvée
+- ```averageRatio``` est le ratio entre la longueur optimale et la longueur moyenne trouvée
+- ```averageTime``` en ```ms``` est le temps moyen nécessaire pour calculer un tour
 
 | file    | algorithm                 | minLength | averageLength | minRatio | averageRatio | averageTime |
 |:--------|:--------------------------|----------:|--------------:|---------:|-------------:|------------:|

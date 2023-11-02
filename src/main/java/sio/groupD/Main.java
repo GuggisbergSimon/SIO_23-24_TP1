@@ -8,6 +8,7 @@ import sio.tsp.TspConstructiveHeuristic;
 import sio.tsp.TspData;
 import sio.tsp.TspParsingException;
 import sio.tsp.TspTour;
+
 import java.io.FileNotFoundException;
 
 /**
@@ -17,10 +18,12 @@ public final class Main {
 
     /**
      * Record stockant en mémoire des méta informations pour un problème TSP
-     * @param name le nom d'un fichier contenant les données du problème
+     *
+     * @param name          le nom d'un fichier contenant les données du problème
      * @param optimalLength la longueur optimale correspondant aux données du problème
      */
-    private record TspMetaData (String name, int optimalLength) { }
+    private record TspMetaData(String name, int optimalLength) {
+    }
 
     private static final int NS_2_MS = 1000000;
     private static final int NBR_RELEVANT_RESULTS = 3;
@@ -36,20 +39,22 @@ public final class Main {
 
     /**
      * Calcule et imprime les résultats relevants par metadata par algorithme
-     * @param formatString le format dans lequel il faut imprimer les résultats
-     * @param filesFolder le dossier dans lequel se trouvent les fichiers contenant les données
+     *
+     * @param formatString   le format dans lequel il faut imprimer les résultats
+     * @param filesFolder    le dossier dans lequel se trouvent les fichiers contenant les données
      * @param filesExtension l'extension de fichier dans lesquels se trouvent les données
      * @return les résultats, par algorithme, par metadata et par résultats relevants
      * @throws FileNotFoundException si les fichiers indiqués n'existent pas
-     * @throws TspParsingException si le format du fichier ne correspond pas à ce qui est attendu
+     * @throws TspParsingException   si le format du fichier ne correspond pas à ce qui est attendu
      */
     private static double[][][] computeAndPrintPerMetadataPerAlgorithm(String formatString, String filesFolder, String filesExtension) throws FileNotFoundException, TspParsingException {
-        record TspObservation(TspConstructiveHeuristic algorithm, TspTour tour, long runTime) { }
+        record TspObservation(TspConstructiveHeuristic algorithm, TspTour tour, long runTime) {
+        }
 
         double[][][] summaryData = new double[ALGORITHMS.length][METADATA.length][NBR_RELEVANT_RESULTS];
         // Itère sur les fichiers
         for (int dataIndex = 0; dataIndex < METADATA.length; dataIndex++) {
-            TspMetaData metaData  = METADATA[dataIndex];
+            TspMetaData metaData = METADATA[dataIndex];
             TspData data = null;
             data = TspData.fromFile(filesFolder + "/" + metaData.name + filesExtension);
 
@@ -106,7 +111,8 @@ public final class Main {
 
     /**
      * Imprime la moyenne des résultats relevants par algorithme
-     * @param data les résultats, par algorithme, par metadata et par résultats relevants
+     *
+     * @param data         les résultats, par algorithme, par metadata et par résultats relevants
      * @param formatString le format dans lequel il faut imprimer les résultats
      */
     private static void printPerAlgorithm(double[][][] data, String formatString) {
@@ -136,19 +142,17 @@ public final class Main {
     public static void main(String[] args) {
         // Imprime le header du premier tableau
         String formatString = "| %-7s | %-25s | %9d | %13f | %8f | %12f | %11f |%n";
-        String line =     "|:--------|:--------------------------|----------:|--------------:|---------:|-------------:|------------:|%n";
+        String line = "|:--------|:--------------------------|----------:|--------------:|---------:|-------------:|------------:|%n";
         System.out.format("| file    | algorithm                 | minLength | averageLength | minRatio | averageRatio | averageTime |%n");
         System.out.format(line);
 
         double[][][] summaryData;
         try {
             summaryData = computeAndPrintPerMetadataPerAlgorithm(formatString, "data", ".dat");
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             System.out.println("A TSP data files could not be found, please ensure either the folder or the extension parameters are correct.");
             return;
-        }
-        catch (TspParsingException e) {
+        } catch (TspParsingException e) {
             System.out.println("A TSP data file does not conform to the expected format.");
             return;
         }
@@ -157,7 +161,7 @@ public final class Main {
 
         // Imprime le header du second tableau
         formatString = "| %-25s | %-8f | %-12f | %-11f |%n";
-        line =            "|:--------------------------|---------:|-------------:|------------:|%n";
+        line = "|:--------------------------|---------:|-------------:|------------:|%n";
         System.out.format("| algorithm                 | minRatio | averageRatio | averageTime |%n");
         System.out.format(line);
 
