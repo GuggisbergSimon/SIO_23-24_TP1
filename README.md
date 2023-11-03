@@ -11,6 +11,11 @@ Légende :
 - ```averageRatio``` est le ratio entre la longueur optimale et la longueur moyenne trouvée
 - ```averageTime``` en ```ms``` est le temps moyen nécessaire pour calculer un tour
 
+| algorithm                 | minRatio | averageRatio | averageTime |
+|:--------------------------|---------:|-------------:|------------:|
+| NearestNeighbor           | 1,174271 |     1,224445 |   16,668824 |
+| DoubleEndsNearestNeighbor | 1,158471 |     1,194973 |   20,045331 |
+
 | file    | algorithm                 | minLength | averageLength | minRatio | averageRatio | averageTime |
 |:--------|:--------------------------|----------:|--------------:|---------:|-------------:|------------:|
 | att532  | NearestNeighbor           |    101261 | 105406,556391 | 1,167556 |     1,215355 |    0,542433 |
@@ -26,7 +31,3 @@ Légende :
 | vm1748  | NearestNeighbor           |    398904 | 415155,640732 | 1,185253 |     1,233541 |   27,745701 |
 | vm1748  | DoubleEndsNearestNeighbor |    393927 | 406976,049771 | 1,170465 |     1,209237 |   34,510365 |
 
-| algorithm                 | minRatio | averageRatio | averageTime |
-|:--------------------------|---------:|-------------:|------------:|
-| NearestNeighbor           | 1,174271 |     1,224445 |   16,668824 |
-| DoubleEndsNearestNeighbor | 1,158471 |     1,194973 |   20,045331 |

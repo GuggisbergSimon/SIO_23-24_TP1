@@ -8,8 +8,6 @@ import sio.tsp.TspData;
 import sio.tsp.TspConstructiveHeuristic;
 import sio.tsp.TspTour;
 
-import java.util.Arrays;
-
 /**
  * Classe NearestNeighbor permet de calculer un tour à l'aide de l'heuristique du plus proche voisin
  */

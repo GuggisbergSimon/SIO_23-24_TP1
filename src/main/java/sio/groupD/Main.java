@@ -17,7 +17,7 @@ import java.io.FileNotFoundException;
 public final class Main {
 
     /**
-     * Record stockant en mémoire des méta informations pour un problème TSP
+     * Record contenant les méta informations pour un problème TSP
      *
      * @param name          le nom d'un fichier contenant les données du problème
      * @param optimalLength la longueur optimale correspondant aux données du problème
@@ -25,11 +25,16 @@ public final class Main {
     private record TspMetaData(String name, int optimalLength) {
     }
 
-    private record TspObservationSummary(long minLength,
-                                         double averageLength,
-                                         double minRatio,
-                                         double averageRatio,
-                                         double averageTime) {
+    /**
+     * Record contenant le résumé de résultats
+     *
+     * @param minLength     longueur minimale trouvée
+     * @param averageLength longueur moyenne trouvée
+     * @param minRatio      ratio entre longueur optimale et longueur minimale trouvée
+     * @param averageRatio  ratio entre longueur optimale et longueur moyenne trouvée
+     * @param averageTime   temps moyen nécessaire pour calculer un tour, en ms
+     */
+    private record TspObservationSummary(long minLength, double averageLength, double minRatio, double averageRatio, double averageTime) {
     }
 
     private static final int NS_2_MS = 1000000;
@@ -45,11 +50,11 @@ public final class Main {
     };
 
     /**
-     * Calcule et imprime les résultats relevants par metadata par algorithme
+     * Calcule un résumé de résultats par metadata par algorithme
      *
      * @param filesFolder    le dossier dans lequel se trouvent les fichiers contenant les données
      * @param filesExtension l'extension de fichier dans lesquels se trouvent les données
-     * @return les résultats, par algorithme, par metadata et par résultats relevants
+     * @return le résumé des résultats, par algorithme, par metadata
      * @throws FileNotFoundException si les fichiers indiqués n'existent pas
      * @throws TspParsingException   si le format du fichier ne correspond pas à ce qui est attendu
      */
@@ -64,6 +69,7 @@ public final class Main {
             TspMetaData metaData = METADATA[dataIndex];
             TspData data = null;
             data = TspData.fromFile(filesFolder + "/" + metaData.name + filesExtension);
+            System.out.println("computing " + metaData.name);
 
             // Itère sur les algorithmes
             for (int algoIndex = 0; algoIndex < ALGORITHMS.length; algoIndex++) {
@@ -106,7 +112,19 @@ public final class Main {
         return summaryData;
     }
 
-    private static void printPerMetadataPerAlgorithm(TspObservationSummary[][] summaries, String formatString) {
+    /**
+     * Imprime les résultats relevants par metadata par algorithme
+     *
+     * @param summaries le résumé des résultats
+     */
+    private static void printPerMetadataPerAlgorithm(TspObservationSummary[][] summaries) {
+        // Imprime le header du tableau par fichier par algorithme
+        String formatString = "| %-7s | %-25s | %9d | %13f | %8f | %12f | %11f |%n";
+        String line = "+---------+---------------------------+-----------+---------------+----------+--------------+-------------+%n";
+        System.out.format("| file    | algorithm                 | minLength | averageLength | minRatio | averageRatio | averageTime |%n");
+        System.out.format(line);
+
+        // Imprime le contenu du tableau par fichier par algorithme
         for (int dataIndex = 0; dataIndex < METADATA.length; dataIndex++) {
             for (int algoIndex = 0; algoIndex < ALGORITHMS.length; algoIndex++) {
                 System.out.format(formatString,
@@ -120,15 +138,23 @@ public final class Main {
                 );
             }
         }
+
+        System.out.format(line);
     }
 
     /**
      * Imprime la moyenne des résultats relevants par algorithme
      *
-     * @param summaries    les résultats, par algorithme, par metadata et par résultats relevants
-     * @param formatString le format dans lequel il faut imprimer les résultats
+     * @param summaries les résultats, par algorithme, par metadata et par résultats relevants
      */
-    private static void printPerAlgorithm(TspObservationSummary[][] summaries, String formatString) {
+    private static void printPerAlgorithm(TspObservationSummary[][] summaries) {
+        // Imprime le header du tableau par algorithme
+        String formatString = "| %-25s | %-8f | %-12f | %-11f |%n";
+        String line = "+---------------------------+----------+--------------+-------------+%n";
+        System.out.format("| algorithm                 | minRatio | averageRatio | averageTime |%n");
+        System.out.format(line);
+
+        // Imprime le contenu du tableau par algorithme
         for (int algoIndex = 0; algoIndex < ALGORITHMS.length; algoIndex++) {
             // Calcule la moyenne des résultats relevants par algorithme
             double[] summaryLine = new double[NBR_RELEVANT_RESULTS];
@@ -150,6 +176,8 @@ public final class Main {
                     summaryLine[2]
             );
         }
+
+        System.out.format(line);
     }
 
     public static void main(String[] args) {
@@ -165,23 +193,9 @@ public final class Main {
             return;
         }
 
-        // Imprime le header du tableau par algorithme
-        String formatString = "| %-25s | %-8f | %-12f | %-11f |%n";
-        String line = "|:--------------------------|---------:|-------------:|------------:|%n";
-        System.out.format("| algorithm                 | minRatio | averageRatio | averageTime |%n");
-        System.out.format(line);
-        // Imprime le contenu du tableau par algorithme
-        printPerAlgorithm(summaryData, formatString);
-        System.out.format(line);
-
-        // Imprime le header du tableau par fichier par algorithme
-        formatString = "| %-7s | %-25s | %9d | %13f | %8f | %12f | %11f |%n";
-        line = "|:--------|:--------------------------|----------:|--------------:|---------:|-------------:|------------:|%n";
-        System.out.format("| file    | algorithm                 | minLength | averageLength | minRatio | averageRatio | averageTime |%n");
-        System.out.format(line);
-        // Imprime le contenu du tableau par fichier par algorithme
-        printPerMetadataPerAlgorithm(summaryData, formatString);
-        System.out.format(line);
         System.out.println();
+        printPerAlgorithm(summaryData);
+        System.out.println();
+        printPerMetadataPerAlgorithm(summaryData);
     }
 }
