@@ -2,6 +2,19 @@
 
 Exemple d'output console généré par le programme. Le ```averageTime``` peut varier selon la machine sur laquelle le code est exécuté.
 
+Légende :
+- ```file``` est le nom du fichier 
+- ```algorithm``` est l'algorithm utilisé
+- ```minLength``` est la longueur minimale trouvée
+- ```averageLength``` est la longueur moyenne trouvée
+- ```minRatio``` est le ratio entre la longueur optimale et la longueur minimale trouvée
+- ```averageRatio``` est le ratio entre la longueur optimale et la longueur moyenne trouvée
+- ```averageTime``` en ```ms``` est le temps moyen nécessaire pour calculer un tour
+
+| algorithm                 | minRatio | averageRatio | averageTime |
+|:--------------------------|---------:|-------------:|------------:|
+| NearestNeighbor           | 1,174271 |     1,224445 |   16,668824 |
+| DoubleEndsNearestNeighbor | 1,158471 |     1,194973 |   20,045331 |
 
 | file    | algorithm                 | minLength | averageLength | minRatio | averageRatio | averageTime |
 |:--------|:--------------------------|----------:|--------------:|---------:|-------------:|------------:|
@@ -18,7 +31,3 @@ Exemple d'output console généré par le programme. Le ```averageTime``` peut v
 | vm1748  | NearestNeighbor           |    398904 | 415155,640732 | 1,185253 |     1,233541 |   27,745701 |
 | vm1748  | DoubleEndsNearestNeighbor |    393927 | 406976,049771 | 1,170465 |     1,209237 |   34,510365 |
 
-| algorithm                 | minRatio | averageRatio | averageTime |
-|:--------------------------|---------:|-------------:|------------:|
-| NearestNeighbor           | 1,174271 |     1,224445 |   16,668824 |
-| DoubleEndsNearestNeighbor | 1,158471 |     1,194973 |   20,045331 |
