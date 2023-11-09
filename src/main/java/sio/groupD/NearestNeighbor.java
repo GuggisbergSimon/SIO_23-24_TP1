@@ -39,6 +39,9 @@ public final class NearestNeighbor implements TspConstructiveHeuristic {
             orderVisited[countVisited] = currentClosest;
         }
 
+        // Ajoute le chemin de retour à la distance totale
+        distTot += data.getDistance(0, citiesVisited.length - 1);
+
         return new TspTour(data, orderVisited, distTot);
     }
 
