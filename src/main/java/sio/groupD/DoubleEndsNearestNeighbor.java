@@ -38,7 +38,7 @@ public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic
         }
 
         // Ajoute le chemin de retour à la distance totale
-        distTot += data.getDistance(0, citiesVisited.length - 1);
+        distTot += data.getDistance(0, data.getNumberOfCities() - 1);
 
         return new TspTour(data, visited, distTot);
     }
