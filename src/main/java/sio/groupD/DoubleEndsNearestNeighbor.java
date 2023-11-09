@@ -16,7 +16,7 @@ public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic
     private int numberOfCities;
     private boolean[] citiesVisited;
     private int firstCounter = 0;
-    private int[] visited;
+    private int[] orderVisited;
     private int lastCounter = 0;
     private int countVisited = 0;
     private int distTot = 0;
@@ -33,14 +33,36 @@ public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic
     public TspTour computeTour(TspData data, int startCityIndex) {
         Init(data.getNumberOfCities(), startCityIndex);
 
+        // Initialise t pour la première itération qui servira de queue d'array
+        int closestOne = -1;
+        int distMin = Integer.MAX_VALUE;
+        for (int i = 0; i < numberOfCities; ++i) {
+            if (citiesVisited[i]) {
+                continue;
+            }
+            if (distMin > data.getDistance(i, orderVisited[firstCounter])) {
+                closestOne = i;
+                distMin = data.getDistance(i, orderVisited[firstCounter]);
+            }
+        }
+
+        addCityToTour(distMin, closestOne, false);
+        countVisited++;
+
         while (countVisited++ < numberOfCities) {
             getClosestCityAndAddIt(data);
+            /*
+            for (int a : orderVisited) {
+                System.out.print(a + " : ");
+            }
+            System.out.println();
+            */
         }
 
         // Ajoute le chemin de retour à la distance totale
         distTot += data.getDistance(0, data.getNumberOfCities() - 1);
 
-        return new TspTour(data, visited, distTot);
+        return new TspTour(data, orderVisited, distTot);
     }
 
     /**
@@ -52,14 +74,26 @@ public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic
     private void Init(int numberOfCities, int startCityIndex) {
         this.numberOfCities = numberOfCities;
         citiesVisited = new boolean[numberOfCities];
-        firstCounter = 1;
-        lastCounter = 0;
+        orderVisited = new int[numberOfCities];
+        firstCounter = 0;
+        lastCounter = numberOfCities - 1;
         countVisited = 0;
-        visited = new int[numberOfCities];
-        visited[countVisited++] = startCityIndex;
         distTot = 0;
-
+        // Initialise s qui servira de tête à l'array orderVisited
         citiesVisited[startCityIndex] = true;
+        orderVisited[countVisited++] = startCityIndex;
+    }
+
+    private void addCityToTour(int distance, int closestCity, boolean byFirst) {
+        distTot += distance;
+        citiesVisited[closestCity] = true;
+        orderVisited[byFirst ? firstCounter + 1 : lastCounter - 1] = closestCity;
+
+        if (byFirst) {
+            ++firstCounter;
+        } else {
+            --lastCounter;
+        }
     }
 
     /**
@@ -71,43 +105,30 @@ public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic
         int closestOne = -1;
         int distMin = Integer.MAX_VALUE;
         boolean byFirst = false;
-        int indiceToModify = -1;
-
+        
         for (int i = 0; i < numberOfCities; ++i) {
-            if (citiesVisited[i]) continue;
-            if (countVisited == 2) // premier tour
-            {
-                if (distMin > data.getDistance(i, visited[0])) {
-                    closestOne = i;
-                    distMin = data.getDistance(i, visited[0]);
-                    indiceToModify = numberOfCities - 1;
-                }
+            if (citiesVisited[i]) {
                 continue;
             }
-            if (distMin > data.getDistance(i, visited[firstCounter])) {
+
+            if (distMin > data.getDistance(i, orderVisited[firstCounter])) {
                 closestOne = i;
-                indiceToModify = firstCounter + 1;
-                distMin = data.getDistance(i, visited[firstCounter]);
+                distMin = data.getDistance(i, orderVisited[firstCounter]);
                 byFirst = true;
             }
-            // si dist ==, cela ne rentre pas dans le second if
-            if (distMin > data.getDistance(i, visited[numberOfCities - lastCounter])) {
+
+            // à distance égale, on préfère ajouter après s plutôt que t
+            if (distMin > data.getDistance(i, orderVisited[lastCounter])) {
                 closestOne = i;
-                indiceToModify = numberOfCities - lastCounter - 1;
-                distMin = data.getDistance(i, visited[numberOfCities - lastCounter]);
+                distMin = data.getDistance(i, orderVisited[lastCounter]);
                 byFirst = false;
             }
         }
-        if (closestOne == -1) return;
 
-        distTot += distMin;
-        citiesVisited[closestOne] = true;
-        visited[indiceToModify] = closestOne;
-
-        if (byFirst) {
-            ++firstCounter;
-        } else {
-            ++lastCounter;
+        if (closestOne == -1)  {
+            return;
         }
+
+        addCityToTour(distMin, closestOne, byFirst);
     }
 }
