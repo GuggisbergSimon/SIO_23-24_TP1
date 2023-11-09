@@ -73,11 +73,14 @@ public final class Main {
 
             // Itère sur les algorithmes
             for (int algoIndex = 0; algoIndex < ALGORITHMS.length; algoIndex++) {
+                /*
+                // TODO restore for testing, delete otherwise
                 if (data.getNumberOfCities() > 1000) {
                     summaryData[dataIndex][algoIndex] = new TspObservationSummary(
                             0,0,0,0,0);
                     continue;
                 }
+                */
 
                 TspConstructiveHeuristic algorithm = ALGORITHMS[algoIndex];
                 int nbrTours = data.getNumberOfCities();
@@ -187,15 +190,6 @@ public final class Main {
     }
 
     public static void main(String[] args) {
-        /*
-        DoubleEndsNearestNeighbor algo = new DoubleEndsNearestNeighbor();
-        try {
-            algo.computeTour(TspData.fromFile("data/test4.dat"), 0);
-        }
-        catch (Exception e) {
-            System.out.println("fuck you \n" + e);
-        }
-        */
         // Calcule TspObservationSummary par fichier par algorithme
         TspObservationSummary[][] summaryData;
         try {

@@ -12,6 +12,7 @@ import sio.tsp.TspTour;
  * Classe DoubleEndsNearestNeighbor permet de calculer un tour à l'aide de l'heuristique des plus proches voisins par les deux bouts
  */
 public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic {
+    private record TspDistanceToCity(int distance, int cityIndex, boolean byFirst) { }
 
     private int numberOfCities;
     private boolean[] citiesVisited;
@@ -34,29 +35,13 @@ public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic
         Init(data.getNumberOfCities(), startCityIndex);
 
         // Initialise t pour la première itération qui servira de queue d'array
-        int closestOne = -1;
-        int distMin = Integer.MAX_VALUE;
-        for (int i = 0; i < numberOfCities; ++i) {
-            if (citiesVisited[i]) {
-                continue;
-            }
-            if (distMin > data.getDistance(i, orderVisited[firstCounter])) {
-                closestOne = i;
-                distMin = data.getDistance(i, orderVisited[firstCounter]);
-            }
-        }
-
-        addCityToTour(distMin, closestOne, false);
+        TspDistanceToCity t = getClosestCity(data, false);
         countVisited++;
+        addCityToTour(t);
 
         while (countVisited++ < numberOfCities) {
-            getClosestCityAndAddIt(data);
-            /*
-            for (int a : orderVisited) {
-                System.out.print(a + " : ");
-            }
-            System.out.println();
-            */
+            TspDistanceToCity v = getClosestCity(data);
+            addCityToTour(v);
         }
 
         // Ajoute le chemin de retour à la distance totale
@@ -84,51 +69,54 @@ public final class DoubleEndsNearestNeighbor implements TspConstructiveHeuristic
         orderVisited[countVisited++] = startCityIndex;
     }
 
-    private void addCityToTour(int distance, int closestCity, boolean byFirst) {
-        distTot += distance;
-        citiesVisited[closestCity] = true;
-        orderVisited[byFirst ? firstCounter + 1 : lastCounter - 1] = closestCity;
+    /**
+     * Met à jour le tour en l'ajoutant au bon endroit de la liste (à l'avant ou à l'arrière suivant la distance)
+     *
+     * @param t données à fournir pour le calcul, contient notamment la distance entre chaque ville
+     */
+    private void addCityToTour(TspDistanceToCity t) {
+        distTot += t.distance;
+        citiesVisited[t.cityIndex] = true;
+        orderVisited[t.byFirst ? firstCounter + 1 : lastCounter - 1] = t.cityIndex;
 
-        if (byFirst) {
+        if (t.byFirst) {
             ++firstCounter;
         } else {
             --lastCounter;
         }
     }
 
-    /**
-     * Met à jour le tour en l'ajoutant au bon endroit de la liste (à l'avant ou à l'arrière suivant la distance)
-     *
-     * @param data données à fournir pour le calcul, contient notamment la distance entre chaque ville
-     */
-    private void getClosestCityAndAddIt(TspData data) {
-        int closestOne = -1;
+    private TspDistanceToCity getClosestCity(TspData data, boolean byFirst) {
+        TspDistanceToCity dist = getClosestCity(data);
+        return new TspDistanceToCity(dist.distance, dist.cityIndex, byFirst);
+    }
+
+    private TspDistanceToCity getClosestCity(TspData data) {
+        int closestCity = -1;
         int distMin = Integer.MAX_VALUE;
         boolean byFirst = false;
-        
+
         for (int i = 0; i < numberOfCities; ++i) {
             if (citiesVisited[i]) {
                 continue;
             }
 
-            if (distMin > data.getDistance(i, orderVisited[firstCounter])) {
-                closestOne = i;
-                distMin = data.getDistance(i, orderVisited[firstCounter]);
+            int currentDistance  = data.getDistance(i, orderVisited[firstCounter]);
+            if (distMin > currentDistance) {
+                closestCity = i;
+                distMin = currentDistance;
                 byFirst = true;
             }
 
             // à distance égale, on préfère ajouter après s plutôt que t
-            if (distMin > data.getDistance(i, orderVisited[lastCounter])) {
-                closestOne = i;
-                distMin = data.getDistance(i, orderVisited[lastCounter]);
+            currentDistance  = data.getDistance(i, orderVisited[lastCounter]);
+            if (distMin > currentDistance) {
+                closestCity = i;
+                distMin = currentDistance;
                 byFirst = false;
             }
         }
 
-        if (closestOne == -1)  {
-            return;
-        }
-
-        addCityToTour(distMin, closestOne, byFirst);
+        return new TspDistanceToCity(distMin, closestCity, byFirst);
     }
 }
